@@ -9,24 +9,17 @@ function injectBridgeButton() {
 
     const btn = document.createElement('button');
     btn.id = 'cb-bridge-btn';
-    btn.innerHTML = '🏹 Bridge Context';
+    const logoUrl = chrome.runtime.getURL('logo.svg');
+    btn.innerHTML = `<img src="${logoUrl}" style="width: 20px; height: 20px; vertical-align: middle;"> <span>Bridge Context</span>`;
     btn.className = 'cb-branded-btn'; 
     
-    // Fixed Floating Style
-    Object.assign(btn.style, {
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
-        zIndex: '999999',
-        padding: '12px 20px',
-        borderRadius: '30px',
-        boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)',
-        fontSize: '14px',
-        border: '1px solid rgba(255, 255, 255, 0.1)'
-    });
-
     btn.onclick = async () => {
-        chrome.storage.local.get(['apiKey'], async (result) => {
+        if (!chrome.runtime?.id) {
+            alert("GreenArrow extension was updated. Please refresh this page to continue bridging.");
+            return;
+        }
+        try {
+            chrome.storage.local.get(['apiKey'], async (result) => {
             let apiKey = result.apiKey;
             
             if (!apiKey) {
@@ -74,6 +67,9 @@ function injectBridgeButton() {
             btn.disabled = false;
         }
         });
+        } catch (e) {
+            alert("Extension context invalidated. Please refresh the page.");
+        }
     };
 
     // Inject directly into the body for floating position

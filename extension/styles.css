@@ -1,16 +1,30 @@
 .cb-branded-btn {
-    position: relative;
-    margin: 10px;
-    padding: 8px 16px;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transition: all 0.2s ease;
-    z-index: 9999;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    position: fixed !important;
+    bottom: 24px !important;
+    right: 24px !important;
+    padding: 14px 24px !important;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 50px !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+    cursor: pointer !important;
+    box-shadow: 0 12px 30px -5px rgba(16, 185, 129, 0.4), 0 4px 10px -2px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 9999999 !important;
+    user-select: none !important;
+    outline: none !important;
+    line-height: 1 !important;
+}
+
+.cb-branded-btn img {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)) !important;
 }
 
 .cb-branded-btn:hover {
