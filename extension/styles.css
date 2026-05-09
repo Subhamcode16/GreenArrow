@@ -1,0 +1,29 @@
+.cb-branded-btn {
+    position: relative;
+    margin: 10px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+    z-index: 9999;
+}
+
+.cb-branded-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    filter: brightness(1.1);
+}
+
+.cb-branded-btn:active {
+    transform: translateY(0);
+}
+
+.cb-branded-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}

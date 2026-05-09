@@ -1,0 +1,40 @@
+services:
+  # 1. FastAPI Backend (Web Service)
+  - type: web
+    name: context-bridge-api
+    env: python
+    buildCommand: python -m pip install -r requirements.txt
+    startCommand: python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: LLM_PROVIDER
+        value: gemini
+      - key: GEMINI_API_KEY
+        sync: false # Set in Render dashboard
+      - key: MONGO_URI
+        sync: false # Connect to MongoDB Atlas
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: bridge-relay
+          property: connectionString
+
+  # 2. Celery Worker (Background Worker)
+  - type: worker
+    name: bridge-worker
+    env: python
+    buildCommand: python -m pip install -r requirements.txt
+    startCommand: celery -A app.core.celery_app worker --loglevel=info
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: bridge-relay
+          property: connectionString
+      - key: GEMINI_API_KEY
+        sync: false
+
+  # 3. Redis Relay (Managed Redis)
+  - type: redis
+    name: bridge-relay
+    ipAllowList: [] # Only internal access
+    plan: free

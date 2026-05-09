@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # 1. FastAPI Web Server (Proxy & Ingest)
+  api:
+    build: .
+    container_name: context_bridge_api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - mongodb
+      - redis
+    restart: always
+
+  # 2. Celery Worker (Compression Engine)
+  worker:
+    build: .
+    container_name: context_bridge_worker
+    command: celery -A app.workers.tasks worker --loglevel=info --concurrency=4
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+      - mongodb
+    restart: always
+
+  # 3. MongoDB (Persistent Storage)
+  mongodb:
+    image: mongo:latest
+    container_name: context_bridge_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+  # 4. Redis (Broker & Cache)
+  redis:
+    image: redis:alpine
+    container_name: context_bridge_redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+volumes:
+  mongo_data:

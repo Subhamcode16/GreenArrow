@@ -1,0 +1,41 @@
+# 🌉 GreenArrow Gitignore
+
+# Security
+.env
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env/
+
+# Node / Extension
+node_modules/
+dist/
+out/
+*.vsix
+
+# Logs & Temp
+*.log
+_archive/
+_tmp/
+.vscode/
+
+# Build artifacts
+build/
+bin/
+obj/
+
+# OS Specific
+.DS_Store
+Thumbs.db
+
+# Documentation Logic
+# Exclude all markdown files except the main README
+*.md
+!README.md
