@@ -1,4 +1,4 @@
-# 🌉 GreenArrow Pro
+# GreenArrow Pro
 ![GreenArrow Logo](./logo.png)
 ### *The Ultimate AI Context Bridge for Modern Engineering.*
 
