@@ -60,9 +60,10 @@ GreenArrow uses **OpenRouter** to power its high-density summarization and conte
 ## 🔗 The Pairing Workflow
 
 1.  **Generate Key**: In VS Code, open the **GreenArrow** activity bar icon and click the **Settings (⚙️)** icon. Your unique **Pairing Key** (e.g., `cb_xyz123`) will be generated.
-2.  **Pair Browser**: Click the GreenArrow icon in your browser toolbar, paste the key, and click **Save**.
-3.  **Bridge Context**: On any ChatGPT or Claude chat page, look for the floating **"Bridge Context"** button. Click it to send the conversation to your IDE instantly.
-4.  **Optimize**: In VS Code, click **"⚡ Optimize Snapshot"** to generate a high-density XML handoff ready for any AI agent.
+2.  **Pair Browser**: Click the GreenArrow icon in your browser toolbar, paste the key, and click **Save & Sync**.
+3.  **Bridge Context**: On any **ChatGPT, Claude, or Gemini** chat page, look for the floating **"Bridge Context"** button. Click it to capture the conversation.
+4.  **Instant Web Handoff**: Open the extension popup to see the generated **XML Snapshot**. Use the quick-action icons to instantly open a new AI tab and auto-paste the context.
+5.  **IDE Handoff**: Alternatively, open VS Code and click **"⚡ Optimize Snapshot"** to pull the context straight into your codebase.
 
 ---
 

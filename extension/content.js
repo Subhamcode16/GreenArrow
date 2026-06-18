@@ -52,7 +52,32 @@ function injectBridgeButton() {
             });
 
             if (response.ok) {
-                btn.innerText = 'Bridged! ✅';
+                btn.innerText = 'Generating XML...';
+                try {
+                    const handoffRes = await fetch(`${apiUrl}/v1/handoff/generate`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'x-api-key': apiKey
+                        },
+                        body: JSON.stringify({ 
+                            messages: messages,
+                            source: window.location.hostname
+                        })
+                    });
+                    
+                    if (handoffRes.ok) {
+                        const handoffData = await handoffRes.json();
+                        chrome.storage.local.set({ latestSnapshot: handoffData.snapshot });
+                        btn.innerText = 'Bridged & Generated! ✅';
+                    } else {
+                        btn.innerText = 'Bridged (No XML) ⚠️';
+                    }
+                } catch (xmlErr) {
+                    console.error('Snapshot generation failed:', xmlErr);
+                    btn.innerText = 'Bridged (No XML) ⚠️';
+                }
+
                 setTimeout(() => {
                     btn.innerText = 'Bridge Context';
                     btn.disabled = false;
@@ -77,9 +102,23 @@ function injectBridgeButton() {
 }
 
 function extractMessages() {
-    const messageElements = document.querySelectorAll('.message-content, .message, [data-testid*="message"]');
-    const messages = [];
+    let messageElements = document.querySelectorAll('[data-message-author-role]');
+    let messages = [];
 
+    if (messageElements.length > 0) {
+        // Modern ChatGPT DOM
+        messageElements.forEach(el => {
+            const role = el.getAttribute('data-message-author-role');
+            messages.push({
+                role: role,
+                content: el.innerText.trim()
+            });
+        });
+        return messages;
+    }
+
+    // Fallback for Claude, Gemini, or older interfaces
+    messageElements = document.querySelectorAll('.message-content, .message, [data-testid*="message"], .font-claude-message');
     messageElements.forEach(el => {
         const role = el.innerText.includes('AI') || el.className.includes('assistant') ? 'assistant' : 'user';
         messages.push({
@@ -96,3 +135,36 @@ const observer = new MutationObserver(injectBridgeButton);
 observer.observe(document.body, { childList: true, subtree: true });
 
 injectBridgeButton();
+
+// Auto-paste functionality for new tabs
+chrome.storage.local.get(['pendingAutoPaste', 'latestSnapshot'], (result) => {
+    if (result.pendingAutoPaste && result.latestSnapshot) {
+        // Clear flag immediately to prevent loop
+        chrome.storage.local.set({ pendingAutoPaste: false });
+        
+        // Polling to wait for the UI input box to load
+        let attempts = 0;
+        const pasteInterval = setInterval(() => {
+            attempts++;
+            // ChatGPT uses #prompt-textarea, Claude uses a Prosemirror contenteditable div
+            let input = document.getElementById('prompt-textarea') || 
+                        document.querySelector('[contenteditable="true"]') ||
+                        document.querySelector('textarea');
+            
+            if (input) {
+                clearInterval(pasteInterval);
+                if (input.tagName === 'TEXTAREA') {
+                    input.value = result.latestSnapshot;
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                } else if (input.isContentEditable) {
+                    // For Claude/ProseMirror
+                    input.innerText = result.latestSnapshot;
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            } else if (attempts > 20) {
+                // Stop trying after 10 seconds
+                clearInterval(pasteInterval);
+            }
+        }, 500);
+    }
+});
